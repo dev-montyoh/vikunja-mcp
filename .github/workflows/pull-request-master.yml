@@ -3,7 +3,7 @@ name: pull-request-master.yml
 on:
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   pull_request_master:
