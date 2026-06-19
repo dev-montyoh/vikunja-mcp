@@ -11,7 +11,7 @@ export function registerUserTools(server: McpServer) {
   /**
    * 현재 인증된 유저 정보를 반환한다.
    */
-  server.tool("users_me", "Get current user info", {}, async () => {
+  server.registerTool("users_me", { description: "Get current user info" }, async () => {
     const data = await api("GET", "/user");
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
@@ -22,10 +22,12 @@ export function registerUserTools(server: McpServer) {
    *
    * @param s - 검색 키워드 (이름 또는 이메일)
    */
-  server.tool(
+  server.registerTool(
     "users_search",
-    "Search for users by name or email (useful for finding user IDs for assignees)",
-    { s: z.string().describe("Search query") },
+    {
+      description: "Search for users by name or email (useful for finding user IDs for assignees)",
+      inputSchema: { s: z.string().describe("Search query") },
+    },
     async ({ s }) => {
       const data = await api("GET", `/users?s=${encodeURIComponent(s)}`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };

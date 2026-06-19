@@ -13,10 +13,12 @@ export function registerAssigneeTools(server: McpServer) {
    *
    * @param task_id - 조회할 태스크 ID
    */
-  server.tool(
+  server.registerTool(
     "task_assignees_list",
-    "List assignees of a task",
-    { task_id: z.number().describe("Task ID") },
+    {
+      description: "List assignees of a task",
+      inputSchema: { task_id: z.number().describe("Task ID") },
+    },
     async ({ task_id }) => {
       const data = await api("GET", `/tasks/${task_id}/assignees`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -29,12 +31,14 @@ export function registerAssigneeTools(server: McpServer) {
    * @param task_id - 담당자를 추가할 태스크 ID
    * @param user_id - 추가할 유저 ID
    */
-  server.tool(
+  server.registerTool(
     "task_assignees_add",
-    "Add a user as assignee to a task",
     {
-      task_id: z.number().describe("Task ID"),
-      user_id: z.number().describe("User ID to assign"),
+      description: "Add a user as assignee to a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        user_id: z.number().describe("User ID to assign"),
+      },
     },
     async ({ task_id, user_id }) => {
       const data = await api("PUT", `/tasks/${task_id}/assignees`, { user_id });
@@ -48,12 +52,14 @@ export function registerAssigneeTools(server: McpServer) {
    * @param task_id - 담당자를 제거할 태스크 ID
    * @param user_id - 제거할 유저 ID
    */
-  server.tool(
+  server.registerTool(
     "task_assignees_remove",
-    "Remove an assignee from a task",
     {
-      task_id: z.number().describe("Task ID"),
-      user_id: z.number().describe("User ID to remove"),
+      description: "Remove an assignee from a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        user_id: z.number().describe("User ID to remove"),
+      },
     },
     async ({ task_id, user_id }) => {
       await api("DELETE", `/tasks/${task_id}/assignees/${user_id}`);

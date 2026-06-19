@@ -11,7 +11,7 @@ export function registerProjectTools(server: McpServer) {
   /**
    * 전체 프로젝트 목록을 반환한다.
    */
-  server.tool("projects_list", "List all projects", {}, async () => {
+  server.registerTool("projects_list", { description: "List all projects" }, async () => {
     const data = await api("GET", "/projects");
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
@@ -21,10 +21,12 @@ export function registerProjectTools(server: McpServer) {
    *
    * @param project_id - 조회할 프로젝트 ID
    */
-  server.tool(
+  server.registerTool(
     "projects_get",
-    "Get a single project by ID",
-    { project_id: z.number().describe("Project ID") },
+    {
+      description: "Get a single project by ID",
+      inputSchema: { project_id: z.number().describe("Project ID") },
+    },
     async ({ project_id }) => {
       const data = await api("GET", `/projects/${project_id}`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -39,14 +41,16 @@ export function registerProjectTools(server: McpServer) {
    * @param parent_project_id - 부모 프로젝트 ID (선택, 하위 프로젝트로 생성 시 사용)
    * @param is_archived - 아카이브 여부 (선택)
    */
-  server.tool(
+  server.registerTool(
     "projects_create",
-    "Create a new project",
     {
-      title: z.string().describe("Project title"),
-      description: z.string().optional().describe("Project description"),
-      parent_project_id: z.number().optional().describe("Parent project ID (to create as sub-project)"),
-      is_archived: z.boolean().optional().describe("Archive the project"),
+      description: "Create a new project",
+      inputSchema: {
+        title: z.string().describe("Project title"),
+        description: z.string().optional().describe("Project description"),
+        parent_project_id: z.number().optional().describe("Parent project ID (to create as sub-project)"),
+        is_archived: z.boolean().optional().describe("Archive the project"),
+      },
     },
     async ({ title, description, parent_project_id, is_archived }) => {
       const body: Record<string, unknown> = { title };
@@ -68,15 +72,17 @@ export function registerProjectTools(server: McpServer) {
    * @param parent_project_id - 새 부모 프로젝트 ID (선택, 0이면 최상위로 이동)
    * @param is_archived - 아카이브/언아카이브 (선택)
    */
-  server.tool(
+  server.registerTool(
     "projects_update",
-    "Update a project (rename, move to another parent, archive, etc.)",
     {
-      project_id: z.number().describe("Project ID"),
-      title: z.string().optional().describe("New title"),
-      description: z.string().optional().describe("New description"),
-      parent_project_id: z.number().optional().describe("New parent project ID (0 to make top-level)"),
-      is_archived: z.boolean().optional().describe("Archive or unarchive"),
+      description: "Update a project (rename, move to another parent, archive, etc.)",
+      inputSchema: {
+        project_id: z.number().describe("Project ID"),
+        title: z.string().optional().describe("New title"),
+        description: z.string().optional().describe("New description"),
+        parent_project_id: z.number().optional().describe("New parent project ID (0 to make top-level)"),
+        is_archived: z.boolean().optional().describe("Archive or unarchive"),
+      },
     },
     async ({ project_id, ...patch }) => {
       const data = await safeUpdate(`/projects/${project_id}`, patch as Record<string, unknown>);
@@ -89,10 +95,12 @@ export function registerProjectTools(server: McpServer) {
    *
    * @param project_id - 삭제할 프로젝트 ID
    */
-  server.tool(
+  server.registerTool(
     "projects_delete",
-    "Delete a project",
-    { project_id: z.number().describe("Project ID") },
+    {
+      description: "Delete a project",
+      inputSchema: { project_id: z.number().describe("Project ID") },
+    },
     async ({ project_id }) => {
       await api("DELETE", `/projects/${project_id}`);
       return { content: [{ type: "text", text: `Project ${project_id} deleted.` }] };
@@ -105,12 +113,14 @@ export function registerProjectTools(server: McpServer) {
    * @param project_id - 복제할 원본 프로젝트 ID
    * @param project_duplicate_destination_id - 복제본을 넣을 대상 프로젝트 ID (선택)
    */
-  server.tool(
+  server.registerTool(
     "projects_duplicate",
-    "Duplicate a project",
     {
-      project_id: z.number().describe("Project ID to duplicate"),
-      project_duplicate_destination_id: z.number().optional().describe("Destination project ID"),
+      description: "Duplicate a project",
+      inputSchema: {
+        project_id: z.number().describe("Project ID to duplicate"),
+        project_duplicate_destination_id: z.number().optional().describe("Destination project ID"),
+      },
     },
     async ({ project_id, project_duplicate_destination_id }) => {
       const body: Record<string, unknown> = {};

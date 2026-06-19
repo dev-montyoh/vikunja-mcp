@@ -12,7 +12,7 @@ export function registerLabelTools(server: McpServer) {
   /**
    * 사용 가능한 전체 라벨 목록을 반환한다.
    */
-  server.tool("labels_list", "List all available labels", {}, async () => {
+  server.registerTool("labels_list", { description: "List all available labels" }, async () => {
     const data = await api("GET", "/labels");
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
@@ -24,13 +24,15 @@ export function registerLabelTools(server: McpServer) {
    * @param description - 라벨 설명 (선택)
    * @param hex_color - 라벨 색상 hex 코드 (선택, e.g. #ff0000)
    */
-  server.tool(
+  server.registerTool(
     "labels_create",
-    "Create a new label",
     {
-      title: z.string().describe("Label title"),
-      description: z.string().optional().describe("Label description"),
-      hex_color: z.string().optional().describe("Hex color code e.g. #ff0000"),
+      description: "Create a new label",
+      inputSchema: {
+        title: z.string().describe("Label title"),
+        description: z.string().optional().describe("Label description"),
+        hex_color: z.string().optional().describe("Hex color code e.g. #ff0000"),
+      },
     },
     async ({ title, description, hex_color }) => {
       const body: Record<string, unknown> = { title };
@@ -49,14 +51,16 @@ export function registerLabelTools(server: McpServer) {
    * @param description - 새 설명 (선택)
    * @param hex_color - 새 색상 hex 코드 (선택)
    */
-  server.tool(
+  server.registerTool(
     "labels_update",
-    "Update a label",
     {
-      label_id: z.number().describe("Label ID"),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      hex_color: z.string().optional().describe("Hex color code"),
+      description: "Update a label",
+      inputSchema: {
+        label_id: z.number().describe("Label ID"),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        hex_color: z.string().optional().describe("Hex color code"),
+      },
     },
     async ({ label_id, ...patch }) => {
       const data = await safeUpdate(`/labels/${label_id}`, patch as Record<string, unknown>);
@@ -69,10 +73,12 @@ export function registerLabelTools(server: McpServer) {
    *
    * @param label_id - 삭제할 라벨 ID
    */
-  server.tool(
+  server.registerTool(
     "labels_delete",
-    "Delete a label",
-    { label_id: z.number().describe("Label ID") },
+    {
+      description: "Delete a label",
+      inputSchema: { label_id: z.number().describe("Label ID") },
+    },
     async ({ label_id }) => {
       await api("DELETE", `/labels/${label_id}`);
       return { content: [{ type: "text", text: `Label ${label_id} deleted.` }] };
@@ -84,10 +90,12 @@ export function registerLabelTools(server: McpServer) {
    *
    * @param task_id - 조회할 태스크 ID
    */
-  server.tool(
+  server.registerTool(
     "task_labels_list",
-    "List labels on a task",
-    { task_id: z.number().describe("Task ID") },
+    {
+      description: "List labels on a task",
+      inputSchema: { task_id: z.number().describe("Task ID") },
+    },
     async ({ task_id }) => {
       const data = await api("GET", `/tasks/${task_id}/labels`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -100,12 +108,14 @@ export function registerLabelTools(server: McpServer) {
    * @param task_id - 라벨을 추가할 태스크 ID
    * @param label_id - 추가할 라벨 ID
    */
-  server.tool(
+  server.registerTool(
     "task_labels_add",
-    "Add a label to a task",
     {
-      task_id: z.number().describe("Task ID"),
-      label_id: z.number().describe("Label ID"),
+      description: "Add a label to a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        label_id: z.number().describe("Label ID"),
+      },
     },
     async ({ task_id, label_id }) => {
       const data = await api("PUT", `/tasks/${task_id}/labels`, { label_id });
@@ -119,12 +129,14 @@ export function registerLabelTools(server: McpServer) {
    * @param task_id - 라벨을 제거할 태스크 ID
    * @param label_id - 제거할 라벨 ID
    */
-  server.tool(
+  server.registerTool(
     "task_labels_remove",
-    "Remove a label from a task",
     {
-      task_id: z.number().describe("Task ID"),
-      label_id: z.number().describe("Label ID"),
+      description: "Remove a label from a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        label_id: z.number().describe("Label ID"),
+      },
     },
     async ({ task_id, label_id }) => {
       await api("DELETE", `/tasks/${task_id}/labels/${label_id}`);

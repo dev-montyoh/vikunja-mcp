@@ -13,10 +13,12 @@ export function registerCommentTools(server: McpServer) {
    *
    * @param task_id - 조회할 태스크 ID
    */
-  server.tool(
+  server.registerTool(
     "comments_list",
-    "List comments on a task",
-    { task_id: z.number().describe("Task ID") },
+    {
+      description: "List comments on a task",
+      inputSchema: { task_id: z.number().describe("Task ID") },
+    },
     async ({ task_id }) => {
       const data = await api("GET", `/tasks/${task_id}/comments`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -29,12 +31,14 @@ export function registerCommentTools(server: McpServer) {
    * @param task_id - 댓글을 달 태스크 ID
    * @param comment - 댓글 내용
    */
-  server.tool(
+  server.registerTool(
     "comments_add",
-    "Add a comment to a task",
     {
-      task_id: z.number().describe("Task ID"),
-      comment: z.string().describe("Comment text"),
+      description: "Add a comment to a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        comment: z.string().describe("Comment text"),
+      },
     },
     async ({ task_id, comment }) => {
       const data = await api("PUT", `/tasks/${task_id}/comments`, { comment });
@@ -49,13 +53,15 @@ export function registerCommentTools(server: McpServer) {
    * @param comment_id - 수정할 댓글 ID
    * @param comment - 새 댓글 내용
    */
-  server.tool(
+  server.registerTool(
     "comments_update",
-    "Update a comment",
     {
-      task_id: z.number().describe("Task ID"),
-      comment_id: z.number().describe("Comment ID"),
-      comment: z.string().describe("New comment text"),
+      description: "Update a comment",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        comment_id: z.number().describe("Comment ID"),
+        comment: z.string().describe("New comment text"),
+      },
     },
     async ({ task_id, comment_id, comment }) => {
       const data = await api("POST", `/tasks/${task_id}/comments/${comment_id}`, { comment, id: comment_id });
@@ -69,12 +75,14 @@ export function registerCommentTools(server: McpServer) {
    * @param task_id - 댓글이 달린 태스크 ID
    * @param comment_id - 삭제할 댓글 ID
    */
-  server.tool(
+  server.registerTool(
     "comments_delete",
-    "Delete a comment",
     {
-      task_id: z.number().describe("Task ID"),
-      comment_id: z.number().describe("Comment ID"),
+      description: "Delete a comment",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        comment_id: z.number().describe("Comment ID"),
+      },
     },
     async ({ task_id, comment_id }) => {
       await api("DELETE", `/tasks/${task_id}/comments/${comment_id}`);

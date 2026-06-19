@@ -19,17 +19,19 @@ export function registerTaskTools(server: McpServer) {
    * @param order_by - 정렬 방향 (선택, asc 또는 desc)
    * @param filter - 필터 표현식 (선택)
    */
-  server.tool(
+  server.registerTool(
     "tasks_list",
-    "List tasks in a project",
     {
-      project_id: z.number().describe("Project ID"),
-      page: z.number().optional().describe("Page number (default: 1)"),
-      per_page: z.number().optional().describe("Items per page"),
-      s: z.string().optional().describe("Search query"),
-      sort_by: z.string().optional().describe("Sort field (e.g. position, created, due_date)"),
-      order_by: z.string().optional().describe("asc or desc"),
-      filter: z.string().optional().describe("Filter expression"),
+      description: "List tasks in a project",
+      inputSchema: {
+        project_id: z.number().describe("Project ID"),
+        page: z.number().optional().describe("Page number (default: 1)"),
+        per_page: z.number().optional().describe("Items per page"),
+        s: z.string().optional().describe("Search query"),
+        sort_by: z.string().optional().describe("Sort field (e.g. position, created, due_date)"),
+        order_by: z.string().optional().describe("asc or desc"),
+        filter: z.string().optional().describe("Filter expression"),
+      },
     },
     async ({ project_id, page, per_page, s, sort_by, order_by, filter }) => {
       const params = new URLSearchParams();
@@ -50,10 +52,12 @@ export function registerTaskTools(server: McpServer) {
    *
    * @param task_id - 조회할 태스크 ID
    */
-  server.tool(
+  server.registerTool(
     "tasks_get",
-    "Get a single task by ID",
-    { task_id: z.number().describe("Task ID") },
+    {
+      description: "Get a single task by ID",
+      inputSchema: { task_id: z.number().describe("Task ID") },
+    },
     async ({ task_id }) => {
       const data = await api("GET", `/tasks/${task_id}`);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -73,19 +77,21 @@ export function registerTaskTools(server: McpServer) {
    * @param percent_done - 완료 퍼센트 0–100 (선택)
    * @param repeat_after - 반복 간격 초 단위 (선택)
    */
-  server.tool(
+  server.registerTool(
     "tasks_create",
-    "Create a new task in a project",
     {
-      project_id: z.number().describe("Project ID"),
-      title: z.string().describe("Task title"),
-      description: z.string().optional().describe("Task description (HTML supported)"),
-      priority: z.number().optional().describe("Priority 0–5"),
-      due_date: z.string().optional().describe("Due date ISO 8601"),
-      start_date: z.string().optional().describe("Start date ISO 8601"),
-      end_date: z.string().optional().describe("End date ISO 8601"),
-      percent_done: z.number().optional().describe("Completion percentage 0–100"),
-      repeat_after: z.number().optional().describe("Repeat interval in seconds"),
+      description: "Create a new task in a project",
+      inputSchema: {
+        project_id: z.number().describe("Project ID"),
+        title: z.string().describe("Task title"),
+        description: z.string().optional().describe("Task description (HTML supported)"),
+        priority: z.number().optional().describe("Priority 0–5"),
+        due_date: z.string().optional().describe("Due date ISO 8601"),
+        start_date: z.string().optional().describe("Start date ISO 8601"),
+        end_date: z.string().optional().describe("End date ISO 8601"),
+        percent_done: z.number().optional().describe("Completion percentage 0–100"),
+        repeat_after: z.number().optional().describe("Repeat interval in seconds"),
+      },
     },
     async ({ project_id, title, description, priority, due_date, start_date, end_date, percent_done, repeat_after }) => {
       const body: Record<string, unknown> = { title };
@@ -117,21 +123,23 @@ export function registerTaskTools(server: McpServer) {
    * @param repeat_after - 반복 간격 초 단위 (선택)
    * @param project_id - 이동할 프로젝트 ID (선택)
    */
-  server.tool(
+  server.registerTool(
     "tasks_update",
-    "Update a task — only provided fields change, everything else (including description) is preserved",
     {
-      task_id: z.number().describe("Task ID"),
-      title: z.string().optional(),
-      description: z.string().optional().describe("HTML supported"),
-      done: z.boolean().optional(),
-      priority: z.number().optional().describe("0–5"),
-      due_date: z.string().optional().describe("ISO 8601"),
-      start_date: z.string().optional().describe("ISO 8601"),
-      end_date: z.string().optional().describe("ISO 8601"),
-      percent_done: z.number().optional().describe("0–100"),
-      repeat_after: z.number().optional().describe("seconds"),
-      project_id: z.number().optional().describe("Move task to another project"),
+      description: "Update a task — only provided fields change, everything else (including description) is preserved",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        title: z.string().optional(),
+        description: z.string().optional().describe("HTML supported"),
+        done: z.boolean().optional(),
+        priority: z.number().optional().describe("0–5"),
+        due_date: z.string().optional().describe("ISO 8601"),
+        start_date: z.string().optional().describe("ISO 8601"),
+        end_date: z.string().optional().describe("ISO 8601"),
+        percent_done: z.number().optional().describe("0–100"),
+        repeat_after: z.number().optional().describe("seconds"),
+        project_id: z.number().optional().describe("Move task to another project"),
+      },
     },
     async ({ task_id, ...patch }) => {
       const data = await safeUpdate(`/tasks/${task_id}`, patch as Record<string, unknown>);
@@ -144,10 +152,12 @@ export function registerTaskTools(server: McpServer) {
    *
    * @param task_id - 삭제할 태스크 ID
    */
-  server.tool(
+  server.registerTool(
     "tasks_delete",
-    "Delete a task",
-    { task_id: z.number().describe("Task ID") },
+    {
+      description: "Delete a task",
+      inputSchema: { task_id: z.number().describe("Task ID") },
+    },
     async ({ task_id }) => {
       await api("DELETE", `/tasks/${task_id}`);
       return { content: [{ type: "text", text: `Task ${task_id} deleted.` }] };
@@ -162,13 +172,15 @@ export function registerTaskTools(server: McpServer) {
    * @param position - 새 position 값 (값이 낮을수록 목록 상단)
    * @param project_view_id - 프로젝트 뷰 ID (선택)
    */
-  server.tool(
+  server.registerTool(
     "tasks_set_position",
-    "Change task position within a project view (for reordering)",
     {
-      task_id: z.number().describe("Task ID"),
-      position: z.number().describe("New position value (lower = higher in list)"),
-      project_view_id: z.number().optional().describe("Project view ID (optional)"),
+      description: "Change task position within a project view (for reordering)",
+      inputSchema: {
+        task_id: z.number().describe("Task ID"),
+        position: z.number().describe("New position value (lower = higher in list)"),
+        project_view_id: z.number().optional().describe("Project view ID (optional)"),
+      },
     },
     async ({ task_id, position, project_view_id }) => {
       const body: Record<string, unknown> = { position };
@@ -184,12 +196,14 @@ export function registerTaskTools(server: McpServer) {
    * @param task_id - 복제할 원본 태스크 ID
    * @param project_id - 복제본을 생성할 프로젝트 ID (선택, 기본값: 원본과 동일 프로젝트)
    */
-  server.tool(
+  server.registerTool(
     "tasks_duplicate",
-    "Duplicate a task",
     {
-      task_id: z.number().describe("Task ID to duplicate"),
-      project_id: z.number().optional().describe("Target project ID (defaults to same project)"),
+      description: "Duplicate a task",
+      inputSchema: {
+        task_id: z.number().describe("Task ID to duplicate"),
+        project_id: z.number().optional().describe("Target project ID (defaults to same project)"),
+      },
     },
     async ({ task_id, project_id }) => {
       const body: Record<string, unknown> = {};

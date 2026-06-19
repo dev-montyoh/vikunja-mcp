@@ -30,13 +30,15 @@ export function registerRelationTools(server: McpServer) {
    * @param other_task_id - 연결할 상대 태스크 ID
    * @param relation_kind - 관계 유형 (subtask, blocking, related 등 12가지)
    */
-  server.tool(
+  server.registerTool(
     "task_relations_add",
-    "Add a relation between two tasks",
     {
-      task_id: z.number().describe("Source task ID"),
-      other_task_id: z.number().describe("Related task ID"),
-      relation_kind: RelationKind.describe("Relation type"),
+      description: "Add a relation between two tasks",
+      inputSchema: {
+        task_id: z.number().describe("Source task ID"),
+        other_task_id: z.number().describe("Related task ID"),
+        relation_kind: RelationKind.describe("Relation type"),
+      },
     },
     async ({ task_id, other_task_id, relation_kind }) => {
       const data = await api("PUT", `/tasks/${task_id}/relations`, { other_task_id, relation_kind });
@@ -51,13 +53,15 @@ export function registerRelationTools(server: McpServer) {
    * @param other_task_id - 연결 해제할 상대 태스크 ID
    * @param relation_kind - 제거할 관계 유형
    */
-  server.tool(
+  server.registerTool(
     "task_relations_remove",
-    "Remove a relation between two tasks",
     {
-      task_id: z.number().describe("Source task ID"),
-      other_task_id: z.number().describe("Related task ID"),
-      relation_kind: z.string().describe("Relation type (e.g. subtask, related, blocking)"),
+      description: "Remove a relation between two tasks",
+      inputSchema: {
+        task_id: z.number().describe("Source task ID"),
+        other_task_id: z.number().describe("Related task ID"),
+        relation_kind: z.string().describe("Relation type (e.g. subtask, related, blocking)"),
+      },
     },
     async ({ task_id, other_task_id, relation_kind }) => {
       await api("DELETE", `/tasks/${task_id}/relations/${relation_kind}/${other_task_id}`);
