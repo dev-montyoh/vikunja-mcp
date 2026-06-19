@@ -1,0 +1,45 @@
+name: push-master.yml
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  push_master:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 코드 체크아웃
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      # 외부 private secrets store 로드
+      - name: Load secrets
+        uses: dev-montyoh/secrets-store/.github/actions/load-secrets@master
+        with:
+          SECRETS_STORE_ACCESS_TOKEN: ${{ secrets.SECRETS_STORE_ACCESS_TOKEN }}
+
+      # SSH 연결 및 배포
+      - name: Deploy
+        uses: appleboy/ssh-action@v1
+        env:
+          DOCKER_REGISTRY_ACCESS_TOKEN: ${{ env.DOCKER_REGISTRY_ACCESS_TOKEN }}
+          DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
+        with:
+          host: ssh.montyoh.dev
+          username: ubuntu
+          key_path: ./secrets-store/key/ec2-ssh-key
+          envs: DOCKER_REGISTRY_ACCESS_TOKEN,DOCKER_REGISTRY_USERNAME
+          script: |
+            # 기존 서비스 및 이미지 삭제
+            docker ps -q --filter "name=vikunja-mcp" | xargs -r docker stop
+            docker ps -a -q --filter "name=vikunja-mcp" | xargs -r docker rm
+            docker images -q ghcr.io/$DOCKER_REGISTRY_USERNAME/vikunja-mcp:latest | xargs -r docker rmi -f
+
+            # docker-compose.yml 업데이트 및 서비스 재시작
+            echo "$DOCKER_REGISTRY_ACCESS_TOKEN" | docker login ghcr.io -u $DOCKER_REGISTRY_USERNAME --password-stdin
+            cd /home/ubuntu/app
+            curl -L -o docker-compose.yml https://raw.githubusercontent.com/$DOCKER_REGISTRY_USERNAME/iac-terraform/refs/heads/master/docker-compose.yml
+            docker-compose pull vikunja-mcp
+            docker-compose up -d vikunja-mcp
