@@ -1,4 +1,4 @@
-name: pull-request-master.yml
+name: pull-request-main.yml
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  pull_request_master:
+  pull_request_main:
     runs-on: ubuntu-latest
 
     steps:

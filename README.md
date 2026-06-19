@@ -4,8 +4,8 @@
 
 # vikunja-mcp
 
-[![Push](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/push-master.yml/badge.svg)](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/push-master.yml)
-[![Build](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/pull-request-master.yml/badge.svg)](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/pull-request-master.yml)
+[![Push](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/push-main.yml/badge.svg)](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/push-main.yml)
+[![Build](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/pull-request-main.yml/badge.svg)](https://github.com/dev-montyoh/vikunja-mcp/actions/workflows/pull-request-main.yml)
 
 **Vikunja REST API를 Claude에서 직접 사용할 수 있도록 래핑한 커스텀 MCP 서버**
 

@@ -1,4 +1,4 @@
-name: push-master.yml
+name: push-main.yml
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  push_master:
+  push_main:
     runs-on: ubuntu-latest
 
     steps:
