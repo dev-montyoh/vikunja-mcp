@@ -2,7 +2,23 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { api, safeUpdate } from "../api.js";
 
+/**
+ * 태스크 관련 MCP 툴을 서버에 등록한다.
+ *
+ * @param server - 툴을 등록할 MCP 서버 인스턴스
+ */
 export function registerTaskTools(server: McpServer) {
+  /**
+   * 프로젝트 내 태스크 목록을 반환한다.
+   *
+   * @param project_id - 조회할 프로젝트 ID
+   * @param page - 페이지 번호 (선택, 기본값 1)
+   * @param per_page - 페이지당 항목 수 (선택)
+   * @param s - 검색 키워드 (선택)
+   * @param sort_by - 정렬 기준 필드 (선택, e.g. position, created, due_date)
+   * @param order_by - 정렬 방향 (선택, asc 또는 desc)
+   * @param filter - 필터 표현식 (선택)
+   */
   server.tool(
     "tasks_list",
     "List tasks in a project",
@@ -29,6 +45,11 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * ID로 단일 태스크를 조회한다.
+   *
+   * @param task_id - 조회할 태스크 ID
+   */
   server.tool(
     "tasks_get",
     "Get a single task by ID",
@@ -39,6 +60,19 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * 프로젝트에 새 태스크를 생성한다.
+   *
+   * @param project_id - 태스크를 생성할 프로젝트 ID
+   * @param title - 태스크 제목
+   * @param description - 태스크 본문 (선택, HTML 지원)
+   * @param priority - 우선순위 0–5 (선택)
+   * @param due_date - 마감일 ISO 8601 (선택)
+   * @param start_date - 시작일 ISO 8601 (선택)
+   * @param end_date - 종료일 ISO 8601 (선택)
+   * @param percent_done - 완료 퍼센트 0–100 (선택)
+   * @param repeat_after - 반복 간격 초 단위 (선택)
+   */
   server.tool(
     "tasks_create",
     "Create a new task in a project",
@@ -67,6 +101,22 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크를 수정한다. 전달한 필드만 변경되며 description 등 나머지는 보존된다.
+   * project_id를 변경하면 다른 프로젝트로 태스크를 이동할 수 있다.
+   *
+   * @param task_id - 수정할 태스크 ID
+   * @param title - 새 제목 (선택)
+   * @param description - 새 본문 (선택, HTML 지원)
+   * @param done - 완료 여부 (선택)
+   * @param priority - 우선순위 0–5 (선택)
+   * @param due_date - 마감일 ISO 8601 (선택)
+   * @param start_date - 시작일 ISO 8601 (선택)
+   * @param end_date - 종료일 ISO 8601 (선택)
+   * @param percent_done - 완료 퍼센트 0–100 (선택)
+   * @param repeat_after - 반복 간격 초 단위 (선택)
+   * @param project_id - 이동할 프로젝트 ID (선택)
+   */
   server.tool(
     "tasks_update",
     "Update a task — only provided fields change, everything else (including description) is preserved",
@@ -89,6 +139,11 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크를 삭제한다.
+   *
+   * @param task_id - 삭제할 태스크 ID
+   */
   server.tool(
     "tasks_delete",
     "Delete a task",
@@ -99,6 +154,14 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크의 순서(position)를 변경한다.
+   * 전용 엔드포인트(POST /tasks/{id}/position)를 사용하므로 다른 필드에 영향을 주지 않는다.
+   *
+   * @param task_id - 순서를 변경할 태스크 ID
+   * @param position - 새 position 값 (값이 낮을수록 목록 상단)
+   * @param project_view_id - 프로젝트 뷰 ID (선택)
+   */
   server.tool(
     "tasks_set_position",
     "Change task position within a project view (for reordering)",
@@ -115,6 +178,12 @@ export function registerTaskTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크를 복제한다.
+   *
+   * @param task_id - 복제할 원본 태스크 ID
+   * @param project_id - 복제본을 생성할 프로젝트 ID (선택, 기본값: 원본과 동일 프로젝트)
+   */
   server.tool(
     "tasks_duplicate",
     "Duplicate a task",

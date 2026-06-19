@@ -2,7 +2,17 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { api } from "../api.js";
 
+/**
+ * 댓글 관련 MCP 툴을 서버에 등록한다.
+ *
+ * @param server - 툴을 등록할 MCP 서버 인스턴스
+ */
 export function registerCommentTools(server: McpServer) {
+  /**
+   * 태스크의 댓글 목록을 반환한다.
+   *
+   * @param task_id - 조회할 태스크 ID
+   */
   server.tool(
     "comments_list",
     "List comments on a task",
@@ -13,6 +23,12 @@ export function registerCommentTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크에 댓글을 추가한다.
+   *
+   * @param task_id - 댓글을 달 태스크 ID
+   * @param comment - 댓글 내용
+   */
   server.tool(
     "comments_add",
     "Add a comment to a task",
@@ -26,6 +42,13 @@ export function registerCommentTools(server: McpServer) {
     }
   );
 
+  /**
+   * 댓글 내용을 수정한다.
+   *
+   * @param task_id - 댓글이 달린 태스크 ID
+   * @param comment_id - 수정할 댓글 ID
+   * @param comment - 새 댓글 내용
+   */
   server.tool(
     "comments_update",
     "Update a comment",
@@ -40,6 +63,12 @@ export function registerCommentTools(server: McpServer) {
     }
   );
 
+  /**
+   * 댓글을 삭제한다.
+   *
+   * @param task_id - 댓글이 달린 태스크 ID
+   * @param comment_id - 삭제할 댓글 ID
+   */
   server.tool(
     "comments_delete",
     "Delete a comment",

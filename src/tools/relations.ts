@@ -17,7 +17,19 @@ const RelationKind = z.enum([
   "copiedto",
 ]);
 
+/**
+ * 태스크 관계(relation) 관련 MCP 툴을 서버에 등록한다.
+ *
+ * @param server - 툴을 등록할 MCP 서버 인스턴스
+ */
 export function registerRelationTools(server: McpServer) {
+  /**
+   * 두 태스크 사이에 관계를 추가한다.
+   *
+   * @param task_id - 기준 태스크 ID
+   * @param other_task_id - 연결할 상대 태스크 ID
+   * @param relation_kind - 관계 유형 (subtask, blocking, related 등 12가지)
+   */
   server.tool(
     "task_relations_add",
     "Add a relation between two tasks",
@@ -32,6 +44,13 @@ export function registerRelationTools(server: McpServer) {
     }
   );
 
+  /**
+   * 두 태스크 사이의 관계를 제거한다.
+   *
+   * @param task_id - 기준 태스크 ID
+   * @param other_task_id - 연결 해제할 상대 태스크 ID
+   * @param relation_kind - 제거할 관계 유형
+   */
   server.tool(
     "task_relations_remove",
     "Remove a relation between two tasks",

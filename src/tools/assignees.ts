@@ -2,7 +2,17 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { api } from "../api.js";
 
+/**
+ * 담당자(assignee) 관련 MCP 툴을 서버에 등록한다.
+ *
+ * @param server - 툴을 등록할 MCP 서버 인스턴스
+ */
 export function registerAssigneeTools(server: McpServer) {
+  /**
+   * 태스크의 담당자 목록을 반환한다.
+   *
+   * @param task_id - 조회할 태스크 ID
+   */
   server.tool(
     "task_assignees_list",
     "List assignees of a task",
@@ -13,6 +23,12 @@ export function registerAssigneeTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크에 담당자를 추가한다. 유저 ID는 users_search로 조회할 수 있다.
+   *
+   * @param task_id - 담당자를 추가할 태스크 ID
+   * @param user_id - 추가할 유저 ID
+   */
   server.tool(
     "task_assignees_add",
     "Add a user as assignee to a task",
@@ -26,6 +42,12 @@ export function registerAssigneeTools(server: McpServer) {
     }
   );
 
+  /**
+   * 태스크에서 담당자를 제거한다.
+   *
+   * @param task_id - 담당자를 제거할 태스크 ID
+   * @param user_id - 제거할 유저 ID
+   */
   server.tool(
     "task_assignees_remove",
     "Remove an assignee from a task",
