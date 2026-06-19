@@ -14,9 +14,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
 
+      # 외부 private secrets store 접근
+      - name: Check out Secrets store
+        uses: actions/checkout@v5
+        with:
+          repository: 'dev-montyoh/secrets-store'
+          token: ${{ secrets.SECRETS_STORE_ACCESS_TOKEN }}
+          path: secrets-store
+
       # 외부 private secrets store 로드
       - name: Load secrets
-        uses: dev-montyoh/secrets-store/.github/actions/load-secrets@master
+        uses: ./secrets-store/.github/actions/load-secrets
         with:
           SECRETS_STORE_ACCESS_TOKEN: ${{ secrets.SECRETS_STORE_ACCESS_TOKEN }}
 
