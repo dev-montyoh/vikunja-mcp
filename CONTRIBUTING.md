@@ -7,6 +7,19 @@
 - Node.js 22
 - Docker
 
+## 환경변수
+
+| 변수 | 필수 | 설명 |
+|---|---|---|
+| `VIKUNJA_URL` | ✅ | Vikunja API 주소. MCP 서버가 내부적으로 API를 호출할 때 사용. (e.g. `http://vikunja:3456/api/v1`) |
+| `VIKUNJA_TOKEN` | ✅ | Vikunja API 토큰. |
+| `BASE_URL` | ✅ | supergateway가 SSE 클라이언트에게 노출하는 외부 공개 주소. (e.g. `https://example.com/api/mcp/vikunja`) |
+| `PORT` | ❌ | supergateway가 열 HTTP 포트. 기본값 `80`. |
+
+> `VIKUNJA_URL`은 컨테이너 내부 통신 주소, `BASE_URL`은 외부에서 접근하는 공개 주소입니다.
+
+---
+
 ## 로컬 실행
 
 1. 리포지토리 클론
@@ -22,7 +35,7 @@
    export VIKUNJA_TOKEN=your_api_token
    ```
 
-4. 개발 모드 실행
+4. 개발 모드 실행 (stdio 모드, supergateway 없이)
    ```bash
    npm run dev
    ```

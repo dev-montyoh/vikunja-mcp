@@ -11,4 +11,4 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev && npm install -g supergateway
 COPY --from=builder /app/dist ./dist
-CMD ["supergateway", "--stdio", "node /app/dist/index.js", "--port", "80", "--baseUrl", "https://www.montyoh.dev/api/mcp/vikunja"]
+CMD ["sh", "-c", "supergateway --stdio 'node /app/dist/index.js' --port ${PORT:-80} --baseUrl ${BASE_URL}"]
