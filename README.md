@@ -21,7 +21,7 @@
 
 - TypeScript
 - MCP SDK (`@modelcontextprotocol/sdk`)
-- supergateway (stdio → HTTP/SSE 변환)
+- supergateway (stdio → HTTP/streamableHttp 변환)
 - Node.js 22
 - Docker
 - GitHub Actions
@@ -34,7 +34,7 @@
 - **position 지원** — 전용 엔드포인트(`POST /tasks/{id}/position`)로 태스크 순서 변경
 - **전체 API 커버** — Vikunja REST API의 주요 엔드포인트를 모두 지원
 - **도메인별 모듈 분리** — 툴을 기능별 파일로 분리해 유지보수 용이
-- **supergateway 번들** — stdio → HTTP/SSE 변환을 이미지 내에 포함, 단일 컨테이너로 운영
+- **supergateway 번들** — stdio → streamableHttp 변환을 이미지 내에 포함, 단일 컨테이너로 운영
 - **CI/CD 자동화** — PR → 빌드 검증, main push → ghcr.io 이미지 배포
 
 ---

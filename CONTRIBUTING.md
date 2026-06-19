@@ -13,10 +13,7 @@
 |---|---|---|
 | `VIKUNJA_URL` | ✅ | Vikunja API 주소. MCP 서버가 내부적으로 API를 호출할 때 사용. (e.g. `http://vikunja:3456/api/v1`) |
 | `VIKUNJA_TOKEN` | ✅ | Vikunja API 토큰. |
-| `BASE_URL` | ✅ | supergateway가 SSE 클라이언트에게 노출하는 외부 공개 주소. (e.g. `https://example.com/api/mcp/vikunja`) |
 | `PORT` | ❌ | supergateway가 열 HTTP 포트. 기본값 `80`. |
-
-> `VIKUNJA_URL`은 컨테이너 내부 통신 주소, `BASE_URL`은 외부에서 접근하는 공개 주소입니다.
 
 ---
 
@@ -54,13 +51,13 @@ Claude Code `.claude/settings.json`에 등록해서 사용하는 방식이에요
      }
    }
    ```
-   > `BASE_URL`은 stdio 직접 연결 시 불필요합니다.
+   > stdio 직접 연결 시 supergateway를 거치지 않습니다.
 
 ---
 
-### 방법 2 — Docker (supergateway 포함, HTTP/SSE 모드)
+### 방법 2 — Docker (supergateway 포함, streamableHttp 모드)
 
-이미지를 빌드해서 supergateway를 통해 HTTP로 노출하는 방식입니다.
+이미지를 빌드해서 supergateway를 통해 HTTP로 노출하는 방식입니다. `/mcp` 엔드포인트가 열립니다.
 
 1. 이미지 빌드
    ```bash
@@ -74,7 +71,11 @@ Claude Code `.claude/settings.json`에 등록해서 사용하는 방식이에요
      -e VIKUNJA_TOKEN=your_api_token \
      vikunja-mcp
    ```
-   > `BASE_URL` 미설정 시 기본값 `http://localhost`로 동작합니다.
+
+3. Claude Code MCP 설정
+   ```bash
+   claude mcp add vikunja https://your-host/mcp -t http
+   ```
 
 ---
 
