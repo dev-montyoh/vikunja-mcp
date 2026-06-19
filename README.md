@@ -51,10 +51,18 @@
 
 ---
 
+## 컨테이너 이미지
+
+```
+ghcr.io/dev-montyoh/vikunja-mcp:latest
+```
+
+---
+
 ## CI/CD
 
-- **PR → main**: ARM64 Docker 이미지 빌드 및 ghcr.io push
-- **push → main**: OCI 인스턴스에 SSH 접속 후 최신 이미지 pull 및 서비스 재시작
+- **PR → main**: npm 빌드 검증
+- **push → main**: ARM64 Docker 이미지 빌드 및 ghcr.io push
 
 ---
 
